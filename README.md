@@ -15,7 +15,7 @@ My name is Hung and lately I'm really into offensive security right now. Not gon
 * Active Directory & Abusing Kerberos
 * Lateral Movement
 * AV evasions & Defense Bypass
-* Cobalt Strike (and adversary simulation
+* Cobalt Strike (and adversary simulation)
 
 📜 I'm a holder of following cybersecurity certifications: CRTP, CRTO
 

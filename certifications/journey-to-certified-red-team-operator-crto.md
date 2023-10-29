@@ -4,7 +4,7 @@ cover: ../.gitbook/assets/Certified RED TEAM OPerator.png
 coverY: 0
 ---
 
-# 🥷 Journey to Certified Red Team Operator (CRTO)
+# ⚔ Journey to Certified Red Team Operator (CRTO)
 
 ## Th0ugh7s on the certification
 
@@ -20,7 +20,24 @@ There is a course offers by the same author - Daniel Duggan (aka the one and onl
 
 ### M4in objective
 
+You would have 4 calendar days, and only 48 hours of time in the exam lab environment. No report writing is required, so take your time. Capturing 6 of the 8 flags will earn you a badge that basically saying that I am good at pretending to be a "real bad actor".&#x20;
 
+<figure><img src="../.gitbook/assets/Screenshot 2023-10-29 213118.png" alt=""><figcaption><p>This is my attempt on the exam. Spend around 2 - 3 hours for the first flag. It was 3:00 am in the morning for the 6th flag.</p></figcaption></figure>
+
+The Snap Labs interface allows for the submission of each flag for verification.&#x20;
+
+<figure><img src="../.gitbook/assets/Screenshot 2023-10-29 212336.png" alt=""><figcaption><p>This is where you can access the attacker machines (Both Windows and Linux) and a victim machine (initial access) </p></figcaption></figure>
+
+You have access to a Kali Linux machine, a Windows attack machine, and a machine on the internal network from which you launch your attack (because it's an assumed breach scenario). Snaplab.io provides access through Guacamole so you can run your whole operation on just a few tabs.
+
+* Good: If you have a really reliable & great internet connection, just hop into the lab environment without worrying about anything.
+* Bad: Sometimes it would just straight up disconnect (a very minor issue, last only for a few seconds - F5 would solve the problem).
+
+### Threat Profile (Ah! The good old red scare)
+
+This would give you a brief on the hypothetical hacker group, provide some info on your target (lol, real Cobalt Strike for the rich, cracked Cobalt Strike for the mad one)
+
+You cannot import any custom tools (~~say goodbye your tools on github~~) and I hope that you can&#x20;
 
 
 
