@@ -1,10 +1,23 @@
 ---
 description: Ahoy there 🏴‍☠️ This is your average h4ck3rm4n speaking! ☠️
+layout:
+  title:
+    visible: true
+  description:
+    visible: true
+  tableOfContents:
+    visible: true
+  outline:
+    visible: false
+  pagination:
+    visible: true
 ---
 
-# 4b0ut m3
+# 🔺 4b0ut m3
 
 ## Introduction
+
+<figure><img src=".gitbook/assets/unnamed.png" alt=""><figcaption><p>Or at least, this is a very dumb version of me?!</p></figcaption></figure>
 
 My name is Hung and lately I'm really into offensive security right now. Not gonna lie fam, this journey is tough but I'm willing to stick with it. This blog will serve as a repository for all of my tools, scripts, exploits, and thoughts on various topics.
 
