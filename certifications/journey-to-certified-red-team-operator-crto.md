@@ -72,7 +72,7 @@ I don't want to spoil anything on the exam, but these are the key aspects you sh
 
 There will be occasions when you'll need to use a lot of brain cells to assess potential defenses and determine the best course of action. If something isn't working, think about the possible causes, think like a bad guy attempting to break into a corp. Just make a note of every conceivable clue you got because there may be certain paths that surprise you.&#x20;
 
-**PLEASE JUST PLEASE PREP ALL YOUR TOOLSETS CAREFULLY! I MEAN IT!!!**
+**AND THE FINAL PIECE OF ADVICE I CAN GIVE YOU IS: PLEASE JUST PREP ALL YOUR TOOLSETS CAREFULLY! I MEAN IT!!!**
 
 ### Cobalt Strike huh?
 
