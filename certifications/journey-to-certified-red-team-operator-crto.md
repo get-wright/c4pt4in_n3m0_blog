@@ -57,7 +57,7 @@ I believe that the majority of the tools offered by the lab are sufficient, but 
 
 ### Dur1ng the exam (20 hours of pain and tears)
 
-Overall, I consider the exam to be rather challenging, but I've had a great time with it. I passed with 6/8 flags and lost my sanity for the 7th one. But it was 4AM in the morning, so I got to my bed and die :skull:. The path is clearly from the beginning, just pwned all domains, the whole forest. The nice thing that wasn't CTF-y in the sense that you had to search in every corner, check every binary on the machine to find a clue on maze.&#x20;
+Overall, I consider the exam to be rather challenging, but I've had a great time with it. I passed with 6/8 flags and lost my sanity for the 7th one. But it was 4AM in the morning, so I got to my bed and die :skull:. The path is clearly from the beginning, just pwned all domains, the whole forest. The nice thing that it wasn't CTF-y in the sense that you had to search in every corner, check every binary on the machine to find a clue on maze.&#x20;
 
 I mentioned it as entry-level, but it does not suggest that anyone with little knowledge of offensive security would be able to pass the exam.&#x20;
 
