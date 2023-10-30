@@ -57,7 +57,7 @@ I believe that the majority of the tools offered by the lab are sufficient, but 
 
 ### Dur1ng the exam (20 hours of pain and tears)
 
-Overall, I consider the exam to be rather challenging, but I've had a great time with it. I passed with 6/8 flags and lost my sanity for the 7th one. But it was 4AM in the morning, so I got to my bed and die :skull:. The path is clearly from the beginning, just find all the machines and pwned them. The nice thing that it wasn't CTF-y in the sense that you had to search in every corner, check every binary on the machine to find a clue on maze.&#x20;
+Overall, I consider the exam to be rather challenging, but I've had a great time with it. I passed with 6/8 flags and lost my sanity for the 7th one. But it was 4AM in the morning, so I got to my bed and die :skull:. The path is clearly from the beginning, just find all the machines and pwned them. The nice thing that it wasn't CTF-y in the sense that you had to search in every corner, check every binary on the machine to find a clue on another maze.&#x20;
 
 I mentioned it as entry-level, but it does not suggest that anyone with little knowledge of offensive security would be able to pass the exam.&#x20;
 
@@ -93,9 +93,9 @@ If you gonna take this exam or just want a fancy piece of paper to brag with you
 * [RastaLabs by HTB](https://www.hackthebox.com/hacker/pro-labs) - Although being made by the same author, RastaLabs is considerably harder than the CRTO itself (due to the fact that you have to do some of the phishing and some CTF-y challenges). But it is a good way to practice & see how your methodologies in work ($49/month).
 * Or just made yourself a homelab (Hard, but free and worth your time).
 
-## Ain't gonna read that, so let jump to the conclusion!
+## Jump psexec to the conclusion!
 
-CRTO was a nice breeze, a fresh take on how a great certification should be. While CRTO by alone won't allow you to sneak past HR's filter like the infamous O(e)S(pensive)CP, it is nice to prove & test how evil you can be :smirk:.
+CRTO was a nice breeze, a fresh take on how a great certification should be. While CRTO by alone won't allow you to sneak past HR's filter like the famous O(e)S(pensive)CP, it is nice to prove & test how evil you can be.
 
 <figure><img src="../.gitbook/assets/image (1).png" alt=""><figcaption><p>A cool badge to put in a LinkdIn account that no one gonna read!</p></figcaption></figure>
 
