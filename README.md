@@ -17,7 +17,7 @@ layout:
 
 ## Introduction
 
-<figure><img src=".gitbook/assets/unnamed.png" alt=""><figcaption><p>Or at least, this is a very dumb version of me?!</p></figcaption></figure>
+<figure><img src=".gitbook/assets/Untitled design (1).png" alt="" width="225"><figcaption><p>Or at least, this is a very dumb version of me?!</p></figcaption></figure>
 
 My name is Hung and lately I'm really into offensive security right now. Not gonna lie fam, this journey is tough but I'm willing to stick with it. This blog will serve as a repository for all of my tools, scripts, exploits, and thoughts on various topics.
 
