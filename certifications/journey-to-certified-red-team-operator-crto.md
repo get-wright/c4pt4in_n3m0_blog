@@ -1,5 +1,5 @@
 ---
-description: Real cheesy, mate /
+description: Real cheesy, mate 🧀
 cover: ../.gitbook/assets/Certified RED TEAM OPerator.png
 coverY: 0
 layout:
@@ -91,7 +91,7 @@ If you gonna take this exam or just want a fancy piece of paper to brag with you
 * [RastaLabs by HTB](https://www.hackthebox.com/hacker/pro-labs) - Although being made by the same author, RastaLabs is considerably harder than the CRTO itself (due to the fact that you have to do some of the phishing and some CTF-y challenges). But it is a good way to practice & see how your methodologies in work ($49/month)&#x20;
 * Or just made yourself a homelab (Hard, but free and worth your time)
 
-## S0, what now?
+## Ain't gonna read that, so let jump to the conclusion!
 
 CRTO was a nice breeze, a fresh take on how a great certification should be. While CRTO by alone won't allow you to sneak past HR's filter like the O(e)S(pensive)CP, it is nice to prove & test how bad you can be :smirk:.
 
