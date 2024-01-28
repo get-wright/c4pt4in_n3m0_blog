@@ -1,7 +1,7 @@
 ---
 description: 'IP: 10.10.11.251'
 cover: ../.gitbook/assets/Pov.png
-coverY: 117.5
+coverY: 338.72222222222223
 layout:
   cover:
     visible: true
