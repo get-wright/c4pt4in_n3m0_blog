@@ -290,7 +290,7 @@ After a bit of exploring, I find this file:
 \
 The <mark style="color:orange;">**`GetNetworkCredential()`**</mark> method is a feature of the PSCredential object. This technique can be used to decrypt the password stored in the PSCredential object.
 
-When I invoke this method and do **Get-Member,** it will show you the properties of the object and you will find a property called Password. use the last command <mark style="color:orange;">**`$cred.GetNetworkCredential().Password`**</mark> and it will return the password in plain text.&#x20;
+When I invoke this method and do **Get-Member,** it will show you the properties of the object and you will find a property called Password. Use the command <mark style="color:orange;">**`$cred.GetNetworkCredential().Password`**</mark> and it will return the password in plain text.&#x20;
 {% endhint %}
 
 We could directly parsing from XML:
