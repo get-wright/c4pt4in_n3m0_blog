@@ -1,7 +1,7 @@
 ---
 description: 'IP: 10.10.11.251 - Platform: Windows - Difficulty: Medium'
 cover: ../.gitbook/assets/Pov.png
-coverY: 338.72222222222223
+coverY: 304.53333333333336
 layout:
   cover:
     visible: true
