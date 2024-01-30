@@ -580,6 +580,13 @@ type root.txt
 
 ```
 
+{% hint style="info" %}
+It is also possible to migrate into `winlogon`, `explorer`&#x20;
+
+\
+There is a port open for localhost, so another possible approach is to port forwarding by using [chisel](https://github.com/jpillora/chisel) then [evil-winrm](https://github.com/Hackplayers/evil-winrm) (or Cobalt Strike, Sliver, Havoc C2)
+{% endhint %}
+
 H4v3 fun ^^
 
 ## RESOURCES
