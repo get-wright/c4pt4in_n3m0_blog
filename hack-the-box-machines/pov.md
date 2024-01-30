@@ -580,9 +580,9 @@ type root.txt
 
 ```
 
+H4v3 fun ^^
 
-
-## Resources
+## RESOURCES
 
 * [https://book.hacktricks.xyz/pentesting-web/deserialization/exploiting-\_\_viewstate-parameter](https://book.hacktricks.xyz/pentesting-web/deserialization/exploiting-\_\_viewstate-parameter)
 * [https://notes.morph3.blog/windows/privilege-escalation/sedebugprivilege](https://notes.morph3.blog/windows/privilege-escalation/sedebugprivilege)
