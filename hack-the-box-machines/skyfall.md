@@ -1,7 +1,7 @@
 ---
 description: 'IP: 10.10.11.254 - Platform: Linux- Difficulty: Insane'
 cover: ../.gitbook/assets/Skyfall.png
-coverY: 320.49066666666664
+coverY: 301.18399999999997
 layout:
   cover:
     visible: true
