@@ -105,7 +105,7 @@ Upon closer inspection, it appears that uploading a normal malicious payload doe
 
 Notice that we have 403 Forbidden on MINIO Metrics. Fear not, because there are two ways around this.
 
-#### 403 Bypass - Path Fuzzing
+### 403 Bypass - Path Fuzzing
 
 The 403 Forbidden response code signifies that although the client is authenticated, they do not possess the necessary permissions to view the resource that they have requested. When a server wishes to block a client from accessing a resource, it usually uses this response. This can happen when the resource is being purposefully hidden or restricted. There are many ways to bypass this:
 
@@ -126,7 +126,7 @@ Adding it into our hosts file and see what in there:
 
 <figure><img src="../.gitbook/assets/423036343_934967667683512_5216352693390125711_n.png" alt=""><figcaption><p>Holy!?</p></figcaption></figure>
 
-#### Bypass by LFI
+### Bypass by LFI
 
 So, we discovered right away that this kind of system is a cloud storage system. And metrics, right? Possibly requires a cloud-native monitoring platform on the back? If we look at the official documentation for MinIO, it should be noted that:
 
@@ -151,7 +151,7 @@ GET /download_file?filename=../minio/v2/metrics/cluster
 
 
 
-#### Leaking environment varibles through the use of CVE-2023-28432
+### Leaking environment varibles through the use of CVE-2023-28432
 
 It was discovered that MinIO has an information disclosure vulnerability ([CVE-2023-28432](https://www.pingsafe.com/blog/cve-2023-28432-minio-information-disclosure-vulnerability/)) that can be used to view sensitive data in the following method:
 
@@ -265,7 +265,7 @@ VAULT_TOKEN="hvs.*****************v4igdhm9PnZDrabYTobQ4Ymnlq1qY-LGh4KHGh2cy43OVR
 
 Looking up on the internet, we discovered that this system uses [Vault](https://developer.hashicorp.com/vault/docs/what-is-vault).
 
-#### Gaining access through Vault OTP
+### Gaining access through Vault OTP
 
 With the provided credential, we could get access by Vault SSH. For SSH authentication on a network, Vault can generate a one-time password (OTP) each time a client wishes to SSH into a remote host.&#x20;
 
