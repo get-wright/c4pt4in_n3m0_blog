@@ -4,9 +4,10 @@
 
 ## Certifications
 
-* [⚔ Journey to Certified Red Team Operator (CRTO)](certifications/journey-to-certified-red-team-operator-crto.md)
+* [⚔️ Journey to Certified Red Team Operator (CRTO)](certifications/journey-to-certified-red-team-operator-crto.md)
 
 ## Hack The Box Machines
 
 * [🟨 POV](hack-the-box-machines/pov.md)
-* [◻ SKYFALL](hack-the-box-machines/skyfall.md)
+* [◻️ SKYFALL](hack-the-box-machines/skyfall.md)
+* [🟥 OFFICE](hack-the-box-machines/office.md)
