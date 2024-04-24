@@ -312,9 +312,24 @@ And because of this, the original Kerberos 4 protocol was vulnerable to offline 
 
 When pre-authentication is turned on, a user sends an authentication server request (AS-REQ) message to the domain controller (DC) in order to initiate the Kerberos authentication process. As part of the AS-REQ packet, it encrypts the current time and sends it to the server. **The encryption key used is the user's password**.
 
-\-> So&#x20;
+**-> So basically, we could just crack the data provided from the packet capture file and gain some type of password to use?!**
 
+The hash type is denoted by "krb5" in the header, and its length is indicated by "18".&#x20;
 
+<pre><code><strong>$krb5pa$18$tstark$OFFICE.HTB$a16f4806da05760af63c566d566f071c5bb35d0a414459417613a9d67932a6735704d0832767af226aaa7360338a34746a00a3765386f5fc
+</strong></code></pre>
 
+Just use hashcat to crack this hash:
 
+<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption><p>playboy69?!? What is this joke??</p></figcaption></figure>
+
+After a bit of mixed and matched, I found out that this is the password for administrator on the aforementioned Joomla CMS. &#x20;
+
+<figure><img src="../.gitbook/assets/image (2).png" alt=""><figcaption><p>A nice addition message that this version of PHP is outdated. Great!</p></figcaption></figure>
+
+Access directly to Administrator account means that we can edit the whole PHP page to get a webshell.&#x20;
+
+<figure><img src="../.gitbook/assets/image (3).png" alt=""><figcaption><p>Change it into a p0wny_shell</p></figcaption></figure>
+
+<figure><img src="../.gitbook/assets/image (4).png" alt=""><figcaption><p>Gain access into a low level cmd!!</p></figcaption></figure>
 

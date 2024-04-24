@@ -18,7 +18,7 @@ layout:
     visible: true
 ---
 
-# ⚔ Journey to Certified Red Team Operator (CRTO)
+# ⚔️ Journey to Certified Red Team Operator (CRTO)
 
 ## Th0ugh7s on the certification
 
@@ -97,7 +97,7 @@ If you gonna take this exam or just want a fancy piece of paper to brag with you
 
 CRTO was a nice breeze, a fresh take on how a great certification should be. While CRTO by alone won't allow you to sneak past HR's filter like the famous O(e)S(pensive)CP, it is nice to prove & test how evil you can be.
 
-<figure><img src="../.gitbook/assets/image (1).png" alt=""><figcaption><p>A cool badge to put in a LinkdIn account that no one gonna read!</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1) (1).png" alt=""><figcaption><p>A cool badge to put in a LinkdIn account that no one gonna read!</p></figcaption></figure>
 
 
 

@@ -224,7 +224,7 @@ Attackers could create malicious payloads that imitate authentic `ViewState` by 
 
 \-> In this case, we could leverage the leak of encryption and signature keys obtained from `web.config` file.
 
-<figure><img src="../.gitbook/assets/image (4).png" alt=""><figcaption><p>A list of scenarios where ViewState Deserialization flaws could be exploited</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (4) (1).png" alt=""><figcaption><p>A list of scenarios where ViewState Deserialization flaws could be exploited</p></figcaption></figure>
 
 Luckily, the `.NET` deserialization tool [ysoserial](https://github.com/pwntester/ysoserial.net) includes a `ViewState`-specific feature. Vulnerabilities in `ObjectStateFormatter` deserialization are caused by its use of known keys and algorithms to impersonate `ViewState` encryption and signatures.
 
@@ -252,7 +252,7 @@ Finally, after replacing the URL encoded value of the generated payload with the
 
 Now, we have gained a shell as <mark style="color:yellow;">`POV\sfitz`</mark>
 
-<figure><img src="../.gitbook/assets/image (5).png" alt=""><figcaption><p>Got da shell!!</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (5) (1).png" alt=""><figcaption><p>Got da shell!!</p></figcaption></figure>
 
 ## PRIVILEGE ESCALATION <a href="#privilege-escalation" id="privilege-escalation"></a>
 
